@@ -23,10 +23,7 @@ struct Map {
 	Map();
 	std::set<x_y> map;
 };
-struct row_checker {
-	row_checker();
-	std::set<x_y> last_index;
-};
+
 struct Block {
 	static inline bool is_exist{ false };
 	POSMOD rel_pos;
