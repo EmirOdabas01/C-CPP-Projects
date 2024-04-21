@@ -7,9 +7,8 @@
 #include <sstream>
 #include <chrono>
 
-using namespace std;
 
-vector<string> reservedWords = {
+const std::vector<std::string> reservedWords = {
         "alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand", "bitor",
         "bool", "break", "case", "catch", "char", "char8_t", "char16_t", "char32_t",
         "class", "compl", "concept", "const", "consteval", "constexpr", "const_cast",
@@ -24,45 +23,45 @@ vector<string> reservedWords = {
         "virtual", "void", "volatile", "wchar_t", "while", "xor", "xor_eq"
 };
 
-vector<string> operators = {
+const std::vector<std::string> operators = {
         "+", "-", "*", "/", "%", "=", "==", "!=", "<", ">", "<=", ">=", "++", "--", "+=", "-=",
         "*=", "/=", "%=", "<<", ">>", "&=", "|=", "^=", "~", "!", "&&", "&", "|", "||", "?", ":", "::",
         "->", "[", "]","(", ")", "{", "}", "&", "*"
 };
 
-vector<string> separators = { ";", ",", "." };
+const std::vector<std::string> separators = { ";", ",", "." };
 
-bool isReservedWords(const string& token) {
+bool isReservedWords(const std::string& token) {
     auto is = find(reservedWords.begin(), reservedWords.end(), token);
     return is != reservedWords.end();
 }
 
-bool isOperator(const string& token) {
+bool isOperator(const std::string& token) {
     auto is = find(operators.begin(), operators.end(), token);
     return is != operators.end();
 }
 
-bool isSeparator(const string& token) {
+bool isSeparator(const std::string& token) {
     auto is = find(separators.begin(), separators.end(), token);
     return is != separators.end();
 }
 
 
 int main() {
-    unordered_map<string, int> identifiersCount, operatorsCount, reservedWordsCount, separatorsCount;
-    string currentToken = "";
-    cout << "Enter the source file directory + file name (e.g., C:\\CSE0405\\Group1.cpp): ";
-    string filename;
-    getline(cin, filename);
-    cout << "Entered file directory + file name: " << filename << endl;
-    ifstream inputFile(filename);
+    std::unordered_map<std::string, int> identifiersCount, operatorsCount, reservedWordsCount, separatorsCount;
+    std::string currentToken = "";
+    std::cout << "Enter the source file directory + file name (e.g., C:\\CSE0405\\Group1.cpp): ";
+    std::string filename;
+    getline(std::cin, filename);
+    std::cout << "Entered file directory + file name: " << filename << '\n';
+    std::ifstream inputFile(filename);
     if (!inputFile.is_open()) {
-        cerr << "Error: Unable to open file: " << filename << endl;
+        std::cerr << "Error: Unable to open file: " << filename << '\n';
         return 1;
     }
-    string line;
+    std::string line;
     int lineCount = 0;
-    auto start_time = chrono::high_resolution_clock::now();
+    auto start_time = std::chrono::high_resolution_clock::now();
 
     while (getline(inputFile, line)) {
         lineCount++;
@@ -80,12 +79,12 @@ int main() {
 
                 while (true) {
                     size_t found = line.find("*/", i);
-                    if (found != string::npos) {
+                    if (found != std::string::npos) {
                         i = found + 2;  // Skip the '*/'
                         break;  // Exit the loop once the end of the multiline comment is found
                     }
                     if (!getline(inputFile, line)) {
-                        cerr << "Error" << endl;
+                        std::cerr << "Error" << '\n';
                         return 1;
                     }
                     lineCount++;
@@ -120,17 +119,17 @@ int main() {
             if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') {
                 continue;
             }
-            else if (isOperator(string(1, ch)) || isSeparator(string(1, ch))) {
-                if (isSeparator(string(1, ch))) {
-                    separatorsCount[string(1, ch)]++;
+            else if (isOperator(std::string(1, ch)) || isSeparator(std::string(1, ch))) {
+                if (isSeparator(std::string(1, ch))) {
+                    separatorsCount[std::string(1, ch)]++;
                 }
                 /*else if (isReservedWords(string(1, ch))) {
                     reservedWordsCount[string(1, ch)]++;
                 }*/
-                else if (isOperator(string(1, ch))) {
-                    string chNext = "";
+                else if (isOperator(std::string(1, ch))) {
+                    std::string chNext = "";
                     chNext += line[i + 1];
-                    currentToken += string(1, ch) + chNext;
+                    currentToken += std::string(1, ch) + chNext;
                     if (isOperator(currentToken)) {
                         operatorsCount[currentToken]++;
                         i++;
@@ -138,7 +137,7 @@ int main() {
                         continue;
                     }
                     currentToken = "";
-                    operatorsCount[string(1, ch)]++;
+                    operatorsCount[std::string(1, ch)]++;
                 }
             }
             else {
@@ -158,49 +157,49 @@ int main() {
     }
 
     int subTotal = 0, grandTotal = 0;
-    cout << "------------------------------\n" << endl;
-    cout << "********* Identifiers *********\n" << endl;
+    std::cout << "------------------------------\n" << '\n';
+    std::cout << "********* Identifiers *********\n" << '\n';
     for (const auto& pair : identifiersCount) {
-        cout << pair.first << " : " << pair.second << endl;
+        std::cout << pair.first << " : " << pair.second << '\n';
         subTotal += pair.second;
     }
-    cout << "\nSubtotal: " << subTotal << endl;
+    std::cout << "\nSubtotal: " << subTotal << '\n';
     grandTotal += subTotal;
     subTotal = 0;
-    cout << "\n------------------------------\n" << endl;
-    cout << "********* Reserved Words *********\n" << endl;
+    std::cout << "\n------------------------------\n" << '\n';
+    std::cout << "********* Reserved Words *********\n" << '\n';
     for (const auto& pair : reservedWordsCount) {
-        cout << pair.first << " : " << pair.second << endl;
+        std::cout << pair.first << " : " << pair.second << '\n';
         subTotal += pair.second;
     }
-    cout << "\nSubtotal: " << subTotal << endl;
+    std::cout << "\nSubtotal: " << subTotal << '\n';
     grandTotal += subTotal;
     subTotal = 0;
-    cout << "\n------------------------------\n" << endl;
-    cout << "********* Operators *********\n" << endl;
+    std::cout << "\n------------------------------\n" << '\n';
+    std::cout << "********* Operators *********\n" << '\n';
     for (const auto& pair : operatorsCount) {
-        cout << pair.first << " : " << pair.second << endl;
+        std::cout << pair.first << " : " << pair.second << '\n';
         subTotal += pair.second;
     }
-    cout << "\nSubtotal: " << subTotal << endl;
+    std::cout << "\nSubtotal: " << subTotal << '\n';
     grandTotal += subTotal;
     subTotal = 0;
-    cout << "\n------------------------------\n" << endl;
-    cout << "********* Seperators *********\n" << endl;
+    std::cout << "\n------------------------------\n" << '\n';
+    std::cout << "********* Seperators *********\n" << '\n';
     for (const auto& pair : separatorsCount) {
-        cout << pair.first << " : " << pair.second << endl;
+        std::cout << pair.first << " : " << pair.second << '\n';
         subTotal += pair.second;
     }
-    cout << "\nSubtotal: " << subTotal << endl;
-    cout << "\n------------------------------\n" << endl;
+    std::cout << "\nSubtotal: " << subTotal << '\n';
+    std::cout << "\n------------------------------\n" << '\n';
     grandTotal += subTotal;
-    cout << "Total Number of Lines: " << lineCount << endl;
-    cout << "Lexemes Grand Total: " << grandTotal << endl;
-    cout << "\n------------------------------\n" << endl;
+    std::cout << "Total Number of Lines: " << lineCount << '\n';
+    std::cout << "Lexemes Grand Total: " << grandTotal << '\n';
+    std::cout << "\n------------------------------\n" << '\n';
     subTotal = 0;
-    auto end_time = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
-    cout << "Runtime: " << duration.count() << " ms\n";
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+    std::cout << "Runtime: " << duration.count() << " ms\n";
 
     return 0;
 }
